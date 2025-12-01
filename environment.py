@@ -1,4 +1,6 @@
 import random
+from degroot import DeGrootModel
+import numpy as np
 
 class Environment:
     def __init__(self, edges, positions, base_infection_p=0.1):
@@ -8,8 +10,14 @@ class Environment:
 
         self.num_nodes = len(positions)
         self.nodes = []
+        self.adj = {i: [] for i in range(self.num_nodes)}
 
+        self._build_graph()
         self._init_nodes()
+
+        self.trust_matrix = self._create_trust_matrix()
+        initial_opinions = [n["opinion_risk"] for n in self.nodes]
+        self.degroot = DeGrootModel(self.num_nodes, trust_matrix=self.trust_matrix, initial_opinions=initial_opinions)
 
     def _init_nodes(self):
         for _ in range(self.num_nodes):
@@ -24,6 +32,11 @@ class Environment:
         self.nodes[patient_zero]["infected"] = True
 
     def step(self):
+        updated_opinions = self.degroot.step()
+
+        for i in range(self.num_nodes):
+            self.nodes[i]["opinion_risk"] = float(updated_opinions[i])
+
         new_infections = []
         infected_edges = []
 
@@ -52,3 +65,27 @@ class Environment:
         n = self.nodes[dst]
         risk_factor = 0.5 * n["innate_risk"] + 0.5 * n["opinion_risk"]
         return self.base_p * risk_factor
+    
+    def _build_graph(self):
+        for u, v in self.edges:
+            self.adj[u].append(v)
+            self.adj[v].append(u)
+    
+    def _create_trust_matrix(self):
+        W = np.zeros((self.num_nodes, self.num_nodes))
+
+        for i in range(self.num_nodes):
+            neighbors = self.adj[i]
+            if not neighbors:
+                W[i, i] = 1.0
+                continue
+            
+            trust_vals = np.random.uniform(0.1, 1.0, size=len(neighbors))
+
+            for t, nbr in zip(trust_vals, neighbors):
+                W[i, nbr] = t
+
+            W[i, i] = np.random.uniform(0.2, 0.8)
+
+        return W
+        
