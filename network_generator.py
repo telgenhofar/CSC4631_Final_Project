@@ -40,8 +40,12 @@ class NetworkGenerator:
     def _generate_small_world(self):
         edges = []
 
+        deg = self.k
+        if deg % 2 == 1:
+            deg += 1
+
         for i in range(self.n):
-            for j in range(1, self.k//2 + 1):
+            for j in range(1, deg//2 + 1):
                 neighbor = (i + j) % self.n
                 edges.append((i, neighbor))
 
