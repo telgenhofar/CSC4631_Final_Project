@@ -93,6 +93,9 @@ class Visualizer:
             else:
                 color = self.opinion_to_color(node["opinion_risk"])
             pygame.draw.circle(self.screen, color, (int(x), int(y)), NODE_RADIUS)
+            if node["vaccinated"]:
+                v_label = self.font.render("V", True, LABEL_COLOR)
+                self.screen.blit(v_label, (int(x) - 6, int(y) - 30))
 
     def opinion_to_color(self, opinion):
         gamma = 2.2

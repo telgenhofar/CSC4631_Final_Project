@@ -2,6 +2,11 @@ import random
 from degroot import DeGrootModel
 import numpy as np
 
+VACCINATION_PROTECTION = 0.8
+BASE_VAX_RATE = 0.01
+OPINION_DECAY = 0.98
+OPINION_INCREASE_PER_NEIGHBOR = 0.1
+
 class Environment:
     def __init__(self, edges, positions, base_infection_p=0.1):
         self.edges = edges
@@ -23,8 +28,9 @@ class Environment:
         for _ in range(self.num_nodes):
             node = {
                 "innate_risk": random.uniform(0.2, 0.8),
-                "opinion_risk": random.uniform(0.0, 1.0),
-                "infected": False
+                "opinion_risk": random.uniform(0.0, 0.1),
+                "infected": False,
+                "vaccinated": False
             }
             self.nodes.append(node)
 
@@ -32,10 +38,14 @@ class Environment:
         self.nodes[patient_zero]["infected"] = True
 
     def step(self):
+        self.update_percieved_risk_from_infections()
+        self.degroot.opinions = np.array([n["opinion_risk"] for n in self.nodes], dtype=float)
         updated_opinions = self.degroot.step()
 
         for i in range(self.num_nodes):
             self.nodes[i]["opinion_risk"] = float(updated_opinions[i])
+
+        self._vaccinate()
 
         new_infections = []
         infected_edges = []
@@ -62,9 +72,11 @@ class Environment:
         return infected_edges
     
     def _transmission_p(self, src, dst):
-        n = self.nodes[dst]
-        risk_factor = 0.5 * n["innate_risk"] + 0.5 * n["opinion_risk"]
-        return self.base_p * risk_factor
+        node = self.nodes[dst]
+        risk = node["innate_risk"]
+        if node["vaccinated"]:
+            risk *= (1 - VACCINATION_PROTECTION)
+        return self.base_p * risk
     
     def _build_graph(self):
         for u, v in self.edges:
@@ -89,3 +101,19 @@ class Environment:
 
         return W
         
+    def _vaccinate(self):
+        for node in self.nodes:
+            if not node["vaccinated"]:
+                p_vax = BASE_VAX_RATE * node["opinion_risk"]
+                if random.random() < p_vax:
+                    node["vaccinated"] = True
+
+    def update_percieved_risk_from_infections(self):
+        for i in range(self.num_nodes):
+            infected_neighbors = sum(self.nodes[n]["infected"] for n in self.adj[i])
+            if infected_neighbors == 0:
+                self.nodes[i]["opinion_risk"] *= OPINION_DECAY
+            else:
+                increase = OPINION_INCREASE_PER_NEIGHBOR * infected_neighbors
+                self.nodes[i]["opinion_risk"] += increase
+            self.nodes[i]["opinion_risk"] = max(0.0, min(1.0, self.nodes[i]["opinion_risk"]))
