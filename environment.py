@@ -1,3 +1,11 @@
+"""
+File: environment.py
+Author: Aiden Telgenhof
+Description: This file contains all of the simulation logic for the epidemic task environment. It
+does not generate graphical networks or the DeGroot logic; however, it does simulate each step 
+in time through the environment and it updates opinions using task specific logic. This logic 
+is mainly having nodes gain more fear when they see an infected neighbor.
+"""
 import random
 from degroot import DeGrootModel
 import numpy as np
@@ -166,4 +174,4 @@ class Environment:
             else:
                 increase = OPINION_INCREASE_PER_NEIGHBOR * infected_neighbors
                 self.nodes[i]["opinion_risk"] += increase
-            self.nodes[i]["opinion_risk"] = max(0.0, min(1.0, self.nodes[i]["opinion_risk"]))""
+            self.nodes[i]["opinion_risk"] = max(0.0, min(1.0, self.nodes[i]["opinion_risk"]))

@@ -1,9 +1,10 @@
 """
-This file was created as a way of running the simulator a bunch of times
+File: run_batch.py
+Author: Aiden Telgenhof
+Description: This file was created as a way of running the simulator a bunch of times
 without the visualizer so that the simulations could run faster. This was useful
 for finding the average number of infected in the simulator.
 """
-
 import argparse
 from network_generator import NetworkGenerator
 from environment import Environment

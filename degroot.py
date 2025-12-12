@@ -1,3 +1,10 @@
+"""
+File: degroot.py
+Author: Aiden Telgenhof
+Description: This file contains all of the methods and logic necessary to run a DeGroot social
+learning model, it is intended to be adaptable to any task environment and not just to the one
+that this project was designed to use.
+"""
 import numpy as np
 
 class DeGrootModel:

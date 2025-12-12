@@ -1,3 +1,11 @@
+"""
+File: network_generator.py
+Author: Aiden Telgenhof
+Description: This file contains all of the logic necessary to create a graphical network. This was 
+designed to be adaptable to any task which requires a graphical network to be generated. It also 
+contains logic to create positions for each node so that they can easily be visualized within a 
+PyGame window, but it should also work with any visualizer that uses PyGame-like coordinates.
+"""
 import random
 import math
 

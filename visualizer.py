@@ -1,3 +1,10 @@
+"""
+File: visualizer.py
+Author: Aiden Telgenhof
+Description: This file contains all of the PyGame logic which is used to create a proper 
+visualization of the simulation with a diease graph that shows infection spread and an 
+opinion graph that shows opinion spread.
+"""
 import pygame
 import time
 from PIL import Image

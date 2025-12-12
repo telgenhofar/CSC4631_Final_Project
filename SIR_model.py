@@ -1,8 +1,9 @@
 """
-Baseline model for this problem, this file also runs a bunch of simulations
+File: SIR_model.py
+Author: Aiden Telgenhof
+Description: Baseline model for this problem, this file also runs a bunch of simulations
 and reports the average number of infected in the model
 """
-
 import numpy as np
 import matplotlib.pyplot as plt
 

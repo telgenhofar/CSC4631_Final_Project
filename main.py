@@ -1,3 +1,9 @@
+"""
+File: main.py
+Author: Aiden Telgenhof
+Description: This file serves as the primary entrypoint for the simulator program, it handles user
+input as well as creating all of the proper initialization steps to get a simulation running.
+"""
 import argparse
 from network_generator import NetworkGenerator
 from environment import Environment
