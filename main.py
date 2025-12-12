@@ -4,6 +4,9 @@ from environment import Environment
 from visualizer import Visualizer
 
 def main():
+    """
+    Entry point for the main simulator program
+    """
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-m", "--mode", type=str, default="small_world",

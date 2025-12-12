@@ -2,13 +2,29 @@ import random
 import math
 
 class NetworkGenerator:
+    """
+    Generates different types of networks and their positions so that
+    the visualizer can create a proper representation of the graph
+    """
     def __init__(self, n, mode="small_world", k=4, rewire_p=0.1):
+        """
+        Initializes the network generator
+    
+        :param n: The number of nodes
+        :param mode: The type of graph to be generated
+        :param k: for Small world graphs, number of neighbors for each node
+        :param rewire_p: probability in small world graph for nodes to rewire connection
+        to further away nodes to make graph traversal faster
+        """
         self.n = n
         self.mode = mode
         self.k = k
         self.rewire_p = rewire_p
 
     def generate(self):
+        """
+        Generates a network based on the selected mode
+        """
         if self.mode == "fully_connected":
             return self._generate_fully_connected()
         elif self.mode == "small_world":
@@ -19,6 +35,9 @@ class NetworkGenerator:
             raise ValueError(f"Unknown mode {self.mode}")
     
     def _generate_fully_connected(self):
+        """
+        Generates a fully connected network
+        """
         edges = []
         for i in range(self.n):
             for j in range(i+1, self.n):
@@ -28,6 +47,11 @@ class NetworkGenerator:
         return edges, positions
     
     def _generate_random(self, p=0.1):
+        """
+        Generates a random network
+
+        :param p: the probability of an edge being created between two nodes
+        """
         edges = []
         for i in range(self.n):
             for j in range(i+1, self.n):
@@ -38,6 +62,9 @@ class NetworkGenerator:
         return edges, positions
     
     def _generate_small_world(self):
+        """
+        Generates a small world graph
+        """
         edges = []
 
         deg = self.k
@@ -62,6 +89,11 @@ class NetworkGenerator:
         return new_edges, positions
     
     def _spring_layout(self, iterations=200, k=40, repulsion=50000):
+        """
+        Terrible code that is necessary for positions so that the visualizer
+        doesn't just output a mess of datapoints. This code attempts to create graphs
+        where neighbor points are closer together than they are with other points.
+        """
         positions = {
             i: [random.uniform(50, 750), random.uniform(50, 550)] for i in range(self.n)
         }
